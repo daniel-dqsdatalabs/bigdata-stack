@@ -1,0 +1,129 @@
+
+services:
+
+  minio:
+    image: minio/minio:latest
+    container_name: storage
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - warehouse:/data
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    command: server /data --console-address ":9001"
+    networks:
+      - dqsdatalabs
+
+
+  miniosetup:
+    image: minio/mc:latest
+    container_name: createbuckets
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+        sleep 2;
+        /usr/bin/mc config host add warehouse http://minio:9000 minio minio123;
+        /usr/bin/mc mb warehouse/flink;
+        /usr/bin/mc mb warehouse/flink/checkpoints;
+        /usr/bin/mc mb warehouse/flink/savepoints;
+        exit 0
+      "
+    networks:
+      - dqsdatalabs
+
+
+  jobmanager:
+    image: flink:latest
+    container_name: flink-jobmanager
+    depends_on:
+      - miniosetup
+    ports:
+      - "8081:8081"
+    command: jobmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+    networks:
+      - dqsdatalabs
+
+
+  taskmanager:
+    image: flink:latest
+    container_name: flink-taskmanager
+    scale: 1
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 2
+        taskmanager.memory.process.size: 2048m
+        taskmanager.memory.network.fraction: 0.4
+        taskmanager.memory.network.min: 512mb
+        taskmanager.memory.network.max: 2gb
+    networks:
+      - dqsdatalabs
+
+
+  # jupyter:
+  #   build: 
+  #     context: .
+  #     dockerfile: ./docker/jupyter/Dockerfile
+  #   container_name: notebooks
+  #   ports:
+  #     - "8888:8888"
+  #   environment:
+  #     - JUPYTER_ENABLE_LAB=yes
+  #   volumes:
+  #     - ./notebooks:/home/jovyan/work
+  #     - ./datasets:/home/jovyan/data
+  #   depends_on:
+  #     - flink-taskmanager
+  #     - minio
+  #   command: "start-notebook.sh --NotebookApp.token="
+  #   networks:
+  #     - dqsdatalabs
+
+
+networks:
+  dqsdatalabs:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.50.0.0/24"
+          gateway: "172.50.0.1"
+
+
+volumes:
+  warehouse:
+    name: warehouse
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./storage/warehouse
+
+
+  # kafka:
+  #   driver: local
+  #   driver_opts:
+  #     o: bind
+  #     type: none
+  #     device: ./data/docker/labs/kafka
+
+  # postgresql:
+  #   driver: local
+  #   driver_opts:
+  #     o: bind
+  #     type: none
+  #     device: ./data/docker/labs/postgresql
+
+
+
+      

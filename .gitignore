@@ -1,0 +1,6 @@
+.lh
+.vscode
+.env
+*.excalidraw
+makefile
+storage
