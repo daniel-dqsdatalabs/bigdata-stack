@@ -3,4 +3,5 @@
 .env
 *.excalidraw
 makefile
+.ipynb_checkpoints
 storage
