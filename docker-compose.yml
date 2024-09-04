@@ -104,10 +104,9 @@ services:
 
 
   jupyter:
-    # build: 
-    #   context: ./docker/jupyter
-    #   dockerfile: Dockerfile
-    image: dqsdatalabs-jupyter:latest
+    build: 
+      context: ./docker/jupyter
+      dockerfile: Dockerfile
     container_name: notebooks
     ports:
       - "8888:8888"
