@@ -11,48 +11,49 @@ services:
       - MINIO_ROOT_USER=minio
       - MINIO_ROOT_PASSWORD=minio123
       - MINIO_DOMAIN=minio
+    volumes:
+      - minio-data:/data
     networks:
       - dqsdatalabs
     command: ["server", "/data", "--console-address", ":9001"]
 
-  miniosetup:
+  minio-mc:
     image: minio/mc:latest
     container_name: minio-mc
+    environment:
+      - MINIO_ACCESS_KEY=minio
+      - MINIO_SECRET_KEY=minio123
+    volumes:
+      - ./docker/minio/minio-entrypoint.sh:/usr/bin/entrypoint.sh
+    entrypoint: /bin/sh /usr/bin/entrypoint.sh
     depends_on:
       - minio
-    entrypoint: >
-      /bin/sh -c "
-      sleep 5;
-      /usr/bin/mc config host add minio http://minio:9000 minio minio123;
-      /usr/bin/mc mb minio/warehouse;
-      /usr/bin/mc policy set public minio/warehouse;
-      tail -f /dev/null
-      exit 0
-      "
     networks:
       - dqsdatalabs
 
   spark-master:
-    # build: 
-    #   context: ./docker/flink
-    #   dockerfile: Dockerfile
+    build: 
+      context: ./docker/flink
+      dockerfile: Dockerfile
     image: spark-sandbox:latest
     container_name: spark-master
     environment:
       - SPARK_MASTER_HOST=spark-master
       - SPARK_MASTER_PORT=7077
       - SPARK_MASTER_WEBUI_PORT=8080
+      - SPARK_UI_PORT=4040 
     ports:
-        - "8080:8080"
-        - "7077:7077"
-    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master    
+        - "8080:8080"  # Web UI for Spark master
+        - "7077:7077"  # Spark master port
+        - "4040:4040"  # Spark UI port
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
     networks:
       - dqsdatalabs
 
   spark-worker:
-    # build: 
-    #   context: ./docker/spark
-    #   dockerfile: Dockerfile
+    build: 
+      context: ./docker/spark
+      dockerfile: Dockerfile
     image: spark-sandbox:latest
     container_name: spark-worker
     depends_on:
@@ -72,9 +73,9 @@ services:
             memory: 2G
 
   flink-jobmanager:
-    # build: 
-    #   context: ./docker/flink
-    #   dockerfile: Dockerfile
+    build: 
+      context: ./docker/flink
+      dockerfile: Dockerfile
     image: flink-sandbox:latest
     container_name: flink-jobmanager
     depends_on:
@@ -93,9 +94,9 @@ services:
       - dqsdatalabs
 
   flink-taskmanager:
-    # build: 
-    #   context: ./docker/flink
-    #   dockerfile: Dockerfile
+    build: 
+      context: ./docker/flink
+      dockerfile: Dockerfile
     image: flink-sandbox:latest
     container_name: flink-taskmanager
     depends_on:
@@ -109,9 +110,9 @@ services:
       - dqsdatalabs
 
   jupyter:
-    # build: 
-    #   context: ./docker/jupyter
-    #   dockerfile: Dockerfile
+    build: 
+      context: ./docker/jupyter
+      dockerfile: Dockerfile
     image: jupyter-sandbox:latest
     container_name: jupyter-notebooks
     ports:
@@ -124,7 +125,6 @@ services:
     networks:
       - dqsdatalabs
 
-
 networks:
   dqsdatalabs:
     name: dqsdatalabs
@@ -133,3 +133,6 @@ networks:
       config:
         - subnet: "172.50.0.0/24"
           gateway: "172.50.0.1"
+
+volumes:
+  minio-data:

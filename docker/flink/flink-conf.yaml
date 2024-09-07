@@ -142,7 +142,7 @@ parallelism.default: 1
 #
 # Execution checkpointing related parameters. Please refer to CheckpointConfig and ExecutionCheckpointingOptions for more details.
 #
-# execution.checkpointing.interval: 3min
+execution.checkpointing.interval: 3min
 # execution.checkpointing.externalized-checkpoint-retention: [DELETE_ON_CANCELLATION, RETAIN_ON_CANCELLATION]
 # execution.checkpointing.max-concurrent-checkpoints: 1
 # execution.checkpointing.min-pause: 0
@@ -154,16 +154,16 @@ parallelism.default: 1
 # Supported backends are 'hashmap', 'rocksdb', or the
 # <class-name-of-factory>.
 #
-# state.backend.type: hashmap
+state.backend.type: hashmap
 
 # Directory for checkpoints filesystem, when using any of the default bundled
 # state backends.
 #
-# state.checkpoints.dir: hdfs://namenode-host:port/flink-checkpoints
+state.checkpoints.dir: s3://flink/flink-checkpoints
 
 # Default target directory for savepoints, optional.
 #
-# state.savepoints.dir: hdfs://namenode-host:port/flink-savepoints
+state.savepoints.dir: s3://flink/flink-savepoints
 
 # Flag to enable/disable incremental checkpoints for backends that
 # support incremental checkpoints (like the RocksDB state backend). 
@@ -183,7 +183,7 @@ jobmanager.execution.failover-strategy: region
 # The port to which the REST client connects to. If rest.bind-port has
 # not been specified, then the server will bind to this port as well.
 #
-#rest.port: 8081
+rest.port: 8081
 
 # The address to which the REST client will connect to
 #
@@ -306,13 +306,13 @@ taskmanager.memory.network.max: 2gb
 # Interval in milliseconds for refreshing the monitored directories.
 #historyserver.archive.fs.refresh-interval: 10000
 
-rest.port: 8081
+
+#==============================================================================
+# S3 Endpoint Configuration
+#==============================================================================
 
 s3.access-key: minio
 s3.secret-key: minio123
 s3.endpoint: http://minio:9000
 s3.path-style-access: true
 s3.disable-ssl: true
-
-
-
