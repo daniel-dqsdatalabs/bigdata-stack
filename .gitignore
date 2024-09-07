@@ -4,3 +4,5 @@
 *.excalidraw
 makefile
 .ipynb_checkpoints
+.Trash-1000
+.DS_Store

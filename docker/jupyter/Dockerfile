@@ -47,7 +47,8 @@ RUN \
         --default=true \
         -o almond && \
     ./almond --install --global && \
-    rm -rf almond couriser 
+    rm -rf almond && \ 
+    rm -rf couriser 
 
 USER ${NB_USER}
 
