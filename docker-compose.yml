@@ -121,6 +121,50 @@ services:
     command: taskmanager
     networks:
       - dqsdatalabs
+  
+  kafka:
+    image: apache/kafka:4.0.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+      - "9094:9094"
+    environment:
+      - KAFKA_CLUSTER_ID=dqsdatalabs-kafka-cluster
+      - KAFKA_NODE_ID=1
+      - JAVA_OPTS=-Xms512m -Xmx1g
+    volumes:
+      - ./docker/kafka/server.properties:/etc/kafka/server.properties
+      - kafka-data:/tmp/kraft-combined-logs
+    command: ["sh", "-c", "if [ ! -f /tmp/kraft-combined-logs/meta.properties ]; then /opt/kafka/bin/kafka-storage.sh format -t $KAFKA_CLUSTER_ID -c /etc/kafka/server.properties; fi && /opt/kafka/bin/kafka-server-start.sh /etc/kafka/server.properties"]
+    networks:
+      - dqsdatalabs
+
+  kafka-producer:
+    build:
+      context: ./docker/kafka
+      dockerfile: Dockerfile.producer
+    image: kafka-producer:latest
+    container_name: kafka-producer
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - dqsdatalabs
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8090:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=dqsdatalabs-kafka-cluster
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+    depends_on:
+      - kafka
+    networks:
+      - dqsdatalabs
 
   jupyter:
     build: 
@@ -149,3 +193,4 @@ networks:
 
 volumes:
   minio-data:
+  kafka-data:
