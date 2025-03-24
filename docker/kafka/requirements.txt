@@ -1,0 +1,5 @@
+kafka-python==2.1.2
+faker==21.0.0
+loguru==0.7.3
+snappy==3.2
+python-dotenv==1.0.0

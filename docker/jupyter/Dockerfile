@@ -40,12 +40,12 @@ RUN \
     curl -L -o coursier https://git.io/coursier-cli && \
     chmod +x coursier && \
     ./coursier \
-        bootstrap \
-        -r jitpack \
-        sh.almond:scala-kernel_$SCALA_VERSION:$ALMOND_VERSION \
-        --sources \
-        --default=true \
-        -o almond && \
+    bootstrap \
+    -r jitpack \
+    sh.almond:scala-kernel_$SCALA_VERSION:$ALMOND_VERSION \
+    --sources \
+    --default=true \
+    -o almond && \
     ./almond --install --global && \
     rm -rf almond && \ 
     rm -rf couriser 
@@ -53,8 +53,8 @@ RUN \
 USER ${NB_USER}
 
 # Install python requirements
-RUN pip install -U apache-flink==1.20.0
-RUN pip install -U pyspark==3.5.2
+RUN pip install -U apache-flink
+RUN pip install -U pyspark
 RUN pip install -U delta-spark
 RUN pip install -U deltalake
 RUN pip install -U graphviz
@@ -65,6 +65,9 @@ RUN pip install -U jupyterlab
 RUN pip install -U nbclassic
 RUN pip install -U notebook
 RUN pip install -U graphviz
+RUN pip install -U faker
+RUN pip install -U faker-pyspark 
+RUN pip install -U polars
 RUN pip install -U widgetsnbextension
 RUN jupyter server --generate-config
 
