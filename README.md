@@ -1,20 +1,16 @@
-# Data Engineering Sandbox
+# Sandbox
 
-This project provides a comprehensive data engineering sandbox environment using Docker. It includes various tools and services commonly used in data engineering workflows, allowing you to experiment, learn, and develop data pipelines and analytics solutions.
+This project provides a comprehensive data engineering environment using Docker. It includes various tools and services commonly used in data engineering workflows, allowing you to experiment, learn, and develop data pipelines and analytics solutions.
 
 ## Table of Contents
+- [Overview](#overview)
+- [Components](#components)
+- [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Troubleshooting](#troubleshooting)
 
-- [Data Engineering Sandbox](#data-engineering-sandbox)
-  - [Table of Contents](#table-of-contents)
-  - [Overview](#overview)
-  - [Components](#components)
-  - [Prerequisites](#prerequisites)
-  - [Getting Started](#getting-started)
-  - [Usage](#usage)
-  - [Configuration](#configuration)
-  - [Troubleshooting](#troubleshooting)
-  - [Contributing](#contributing)
-  - [License](#license)
 
 ## Overview
 
@@ -50,8 +46,8 @@ All services are containerized using Docker, making it easy to set up and tear d
 1. Clone this repository (or download the ZIP file):
 
    ```
-   git clone https://github.com/daniel-dqsdatalabs/data-engineering-sandbox.git
-   cd data-engineering-sandbox
+   git clone https://github.com/daniel-dqsdatalabs/bigdata-stack.git
+   cd bigdata-stack
    ```
 
 2. Create a `.env` file in the project root and add the following environment variables:
@@ -140,10 +136,3 @@ docker exec -it kafka /opt/kafka/bin/kafka-topics.sh --create --topic my-topic -
   docker-compose logs kafka
   ```
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is open-source and available under the [MIT License](LICENSE).
