@@ -1,0 +1,16 @@
+
+**/.DS_Store
+**/.git
+**/.gitignore
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/node_modules
+*.log
+.env
+
+# Exclude volume directories to prevent COPY from picking them up if COPY . . is used
+datasets/
+notebooks/
+.ipynb_checkpoints/

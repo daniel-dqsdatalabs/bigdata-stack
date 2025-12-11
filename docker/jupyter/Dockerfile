@@ -53,23 +53,10 @@ RUN \
 USER ${NB_USER}
 
 # Install python requirements
-RUN pip install -U apache-flink
-RUN pip install -U pyspark
-RUN pip install -U delta-spark
-RUN pip install -U deltalake
-RUN pip install -U graphviz
-RUN pip install -U ipykernel
-RUN pip install -U ipywidgets
-RUN pip install -U jupyterhub
-RUN pip install -U jupyterlab
-RUN pip install -U nbclassic
-RUN pip install -U notebook
-RUN pip install -U graphviz
-RUN pip install -U faker
-RUN pip install -U faker-pyspark 
-RUN pip install -U polars
-RUN pip install -U widgetsnbextension
-RUN jupyter server --generate-config
+# Install python requirements
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
+    jupyter server --generate-config
 
 EXPOSE 8888
 
